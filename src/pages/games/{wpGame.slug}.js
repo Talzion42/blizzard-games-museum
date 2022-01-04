@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Layout from '../../components/layout'
 import { graphql } from 'gatsby'
+import { GatsbyImage, getImage } from 'gatsby-plugin-image' 
 
 export const query = graphql`
   query ($id: String) {
@@ -23,9 +24,12 @@ export const query = graphql`
         }
         title
         gameImage {
-          id
-          link
-          uri
+          localFile {
+            childImageSharp {
+              gatsbyImageData(placeholder: BLURRED)
+            }
+          }
+          altText
         }
       }
     }
@@ -34,9 +38,12 @@ export const query = graphql`
 
 
 const GamePage = ({data: {wpGame: {gameMeta: game}}}) => {
+  const image = getImage(game.gameImage.localFile);
+
   return (
     <Layout pageTitle={game.title}>
       <div>
+        <GatsbyImage image={image} alt={game.gameImage.altText} />
         <div dangerouslySetInnerHTML={{__html: game.description}}/>
         <p>Metascore: {game.metascore}</p>
         <p>Price: {game.price}</p>
